@@ -3,6 +3,10 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db.js";
 
+// Import routes
+import authRoutes from "./routes/auth.routes.js";
+import formRoutes from "./routes/form.routes.js";
+import submissionRoutes from "./routes/submission.routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -16,6 +20,12 @@ app.use(cors());
 // Connect to MongoDB
 connectDB();
 
+// JSON-only routes
+app.use("/api/auth", express.json({ limit: "10mb" }), authRoutes);
+app.use("/api/form", express.json({ limit: "10mb" }), formRoutes);
+
+// Multer will handle multipart for submission routes
+app.use("/api/submission", submissionRoutes);
 
 // Error handling middleware
 app.use(

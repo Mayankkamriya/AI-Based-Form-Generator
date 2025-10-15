@@ -1,15 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import api from '@/app/utils/api';
 
 interface Submission {
   id: string;
-  data: Record<string, string | number>;
+  data: string | Record<string, string | number>;
   files: string[];
   createdAt: string;
+}
+
+interface DataWithResponses {
+  responses?: string | Record<string, string | number>;
 }
 
 export default function SubmissionsPage() {
@@ -21,13 +25,7 @@ export default function SubmissionsPage() {
   const [error, setError] = useState('');
   const [formTitle, setFormTitle] = useState('');
 
-  // Fetch submissions
-  useEffect(() => {
-    fetchSubmissions();
-    fetchFormTitle();
-  }, [formId]);
-
-  const fetchSubmissions = async () => {
+  const fetchSubmissions = useCallback(async () => {
     try {
       setIsLoading(true);
       const response = await api.get(`/submission/${formId}`);
@@ -38,7 +36,7 @@ export default function SubmissionsPage() {
         
         // Check if data has a 'responses' field with stringified JSON
         if (parsedData && typeof parsedData === 'object' && 'responses' in parsedData) {
-          const responsesValue = (parsedData as any).responses;
+          const responsesValue = (parsedData as DataWithResponses).responses;
           if (typeof responsesValue === 'string') {
             try {
               parsedData = JSON.parse(responsesValue);
@@ -47,7 +45,7 @@ export default function SubmissionsPage() {
               parsedData = responsesValue;
             }
           } else {
-            parsedData = responsesValue;
+            parsedData = responsesValue ?? {};
           }
         }
         // If data itself is a string, try to parse it
@@ -73,16 +71,22 @@ export default function SubmissionsPage() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [formId]);
 
-  const fetchFormTitle = async () => {
+  const fetchFormTitle = useCallback(async () => {
     try {
       const response = await api.get(`/form/${formId}`);
       setFormTitle(response.data.form.title);
     } catch {
       // Silently fail, form title is not critical
     }
-  };
+  }, [formId]);
+
+  // Fetch submissions
+  useEffect(() => {
+    fetchSubmissions();
+    fetchFormTitle();
+  }, [fetchSubmissions, fetchFormTitle]);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -216,7 +220,7 @@ export default function SubmissionsPage() {
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Submitted
                     </th>
-                    {submissions.length > 0 && Object.keys(submissions[0].data).map((fieldName) => (
+                    {submissions.length > 0 && typeof submissions[0].data === 'object' &&Object.keys(submissions[0].data as Record<string, string | number>).map((fieldName) => (
                       <th key={fieldName} className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         {fieldName}
                       </th>
@@ -232,11 +236,20 @@ export default function SubmissionsPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(submission.createdAt)}
                       </td>
-                      {Object.keys(submission.data).map((fieldName) => (
-                        <td key={fieldName} className="px-6 py-4 text-sm">
-                          {renderFieldValue(submission.data[fieldName])}
+                      {/* Render fields if object, otherwise render raw string */}
+                      {typeof submission.data === 'object' && submission.data !== null ? (
+                        Object.keys(submission.data as Record<string, string | number>).map((fieldName) => (
+                          <td key={fieldName} className="px-6 py-4 text-sm">
+                            {renderFieldValue(
+                              (submission.data as Record<string, string | number>)[fieldName]
+                            )}
+                          </td>
+                        ))
+                      ) : (
+                        <td className="px-6 py-4 text-sm">
+                          {renderFieldValue(submission.data as string)}
                         </td>
-                      ))}
+                      )}
                       <td className="px-6 py-4 text-sm">
                         {renderFileLinks(submission.files)}
                       </td>

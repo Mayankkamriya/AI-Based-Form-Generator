@@ -21,23 +21,24 @@ export default function DashboardLayout({ children }: { children: ReactNode }) {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Shared Header / Navbar */}
-      <header className="bg-white shadow p-4">
-        <div className="flex justify-between items-center">
-          <h1 className="text-xl font-bold text-gray-800">Dashboard</h1>
+      <header className="bg-white shadow px-3 py-3 sm:px-4 sm:py-4 sticky top-0 z-10">
+        <div className="max-w-7xl mx-auto flex justify-between items-center">
+          <h1 className="text-lg sm:text-xl font-bold text-gray-800">Dashboard</h1>
           {isLoggedIn && (
             <button
               onClick={handleLogout}
-              className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+              className="flex items-center gap-1.5 sm:gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors text-sm sm:text-base"
             >
-              <LogOut size={20} />
-              Logout
+              <LogOut size={16} className="sm:w-5 sm:h-5" />
+              <span className="hidden xs:inline sm:inline">Logout</span>
+              <span className="xs:hidden sm:hidden">Exit</span>
             </button>
           )}
         </div>
       </header>
 
       {/* Main Content */}
-      <main className="p-8">{children}</main>
+      <main>{children}</main>
     </div>
   );
 }

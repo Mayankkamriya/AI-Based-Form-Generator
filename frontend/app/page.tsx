@@ -133,7 +133,7 @@ export default function HomePage() {
                   </div>
                   <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
                     <p className="text-gray-700 italic">
-                      "Create a contact form with name, email, phone, and message fields"
+                      &ldquo;Create a contact form with name, email, phone, and message fields&ldquo;
                     </p>
                   </div>
                 </div>

@@ -79,6 +79,7 @@ export default function FormPage() {
     try {
       setIsSubmitting(true);
       setError('');
+      setSuccess(false);
 
       const formData = new FormData();
 
@@ -113,11 +114,17 @@ export default function FormPage() {
       setSuccess(true);
       reset();
       setFiles({});
+      
+      // Scroll to top to show success message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
 
-      setTimeout(() => setSuccess(false), 5000);
+      // Hide success message after 8 seconds
+      setTimeout(() => setSuccess(false), 8000);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       setError(error.response?.data?.message || 'Failed to submit form');
+      // Scroll to top to show error message
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } finally {
       setIsSubmitting(false);
     }
@@ -272,7 +279,7 @@ export default function FormPage() {
     );
   }
 
-  if (error) {
+  if (error && !formSchema) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -311,16 +318,37 @@ export default function FormPage() {
           </div>
         </div>
 
+        {/* Error Message */}
+        {error && (
+          <div className="mb-8 bg-gradient-to-r from-red-50 to-pink-50 border-2 border-red-400 text-red-800 px-8 py-6 rounded-2xl shadow-lg">
+            <div className="flex flex-col items-center justify-center space-y-3">
+              <div className="bg-red-500 rounded-full p-3">
+                <svg className="w-10 h-10 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </div>
+              <div className="text-center">
+                <p className="font-bold text-xl mb-1">Submission Failed</p>
+                <p className="text-base text-red-700">{error}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Success Message */}
         {success && (
-          <div className="mb-8 bg-green-50 border border-green-200 text-green-700 px-6 py-4 rounded-2xl text-center">
-            <div className="flex items-center justify-center space-x-3">
-              <CheckCircle className="w-6 h-6" />
-              <div>
-                <p className="font-semibold text-lg">
-                  Form submitted successfully!
+          <div className="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-400 text-green-800 px-8 py-6 rounded-2xl shadow-lg animate-pulse">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="bg-green-500 rounded-full p-3">
+                <CheckCircle className="w-10 h-10 text-white" />
+              </div>
+              <div className="text-center">
+                <p className="font-bold text-2xl mb-2">
+                  ✅ Form Submitted Successfully!
                 </p>
-                <p className="text-sm mt-1">Thank you for your submission.</p>
+                <p className="text-base text-green-700">
+                  Thank you! Your response has been recorded.
+                </p>
               </div>
             </div>
           </div>

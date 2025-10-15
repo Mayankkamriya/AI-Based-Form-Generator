@@ -70,7 +70,7 @@ export default function SubmissionsPage() {
           <span className="text-gray-900">{value.substring(0, 100)}...</span>
           <button
             onClick={() => alert(value)}
-            className="ml-2 text-indigo-600 hover:text-indigo-500 text-sm"
+            className="ml-2 text-teal-600 hover:text-teal-500 text-sm"
           >
             View full
           </button>
@@ -94,7 +94,7 @@ export default function SubmissionsPage() {
               href={fileUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-indigo-600 hover:text-indigo-500 text-sm flex items-center"
+              className="text-teal-600 hover:text-teal-500 text-sm flex items-center"
             >
               <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13" />
@@ -112,7 +112,7 @@ export default function SubmissionsPage() {
       <div className="min-h-screen bg-gray-50 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto"></div>
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-teal-600 mx-auto"></div>
             <p className="mt-4 text-gray-600">Loading submissions...</p>
           </div>
         </div>
@@ -148,7 +148,7 @@ export default function SubmissionsPage() {
             </div>
             <Link
               href="/dashboard"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
             >
               ← Back to Dashboard
             </Link>

@@ -90,7 +90,8 @@ export default function HomePage() {
                 No more complex form builders or coding required.
               </p>
             
-          <div className="flex flex-col sm:flex-row items-center lg:items-start space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
+          <div className="flex justify-center lg:justify-center">           
+          {/* <div className="flex flex-col sm:flex-row items-center lg:justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-8"> */}
             <button
               onClick={() => router.push(isLoggedIn ? '/dashboard' : '/signup')}
               className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-2"

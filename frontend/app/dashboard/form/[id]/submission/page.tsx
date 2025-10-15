@@ -43,6 +43,7 @@ export default function SubmissionsPage() {
             try {
               parsedData = JSON.parse(responsesValue);
             } catch {
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               parsedData = responsesValue;
             }
           } else {

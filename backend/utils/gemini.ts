@@ -1,86 +1,76 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import dotenv from "dotenv";
+dotenv.config();
+const GEMINI_MODEL = "gemini-1.5-flash";
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || "");
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY || '');
-
-// Test function to check available models
-export const testGeminiConnection = async () => {
+export const testGeminiConnection = async (): Promise<boolean> => {
   try {
-    // Try the newer model names first
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
-    const result = await model.generateContent('Hello, test message');
-    const response = await result.response;
-    console.log('Gemini connection successful with gemini-1.5-flash');
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
+    const result = await model.generateContent("Hello from Gemini!");
     return true;
-  } catch (error) {
-    console.error('Error with gemini-1.5-flash:', error);
-    
-    try {
-      const model = genAI.getGenerativeModel({ model: 'gemini-pro' });
-      const result = await model.generateContent('Hello, test message');
-      const response = await result.response;
-      console.log('Gemini connection successful with gemini-pro');
-      return true;
-    } catch (error2) {
-      console.error('Error with gemini-pro:', error2);
-      return false;
+  } catch (error: any) {
+    console.error(`❌ Gemini connection failed with ${GEMINI_MODEL}:`, error.message);
+    if (error.status === 404 || error.message?.includes("not found")) {
+      console.error(
+        "👉 The model might not be accessible in your current project or region. Make sure your API key has access to gemini-1.5-flash."
+      );
     }
+    return false;
   }
 };
 
 export const generateFormSchema = async (prompt: string): Promise<Record<string, any>> => {
   try {
-    // Use the newer model name
-    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const model = genAI.getGenerativeModel({ model: GEMINI_MODEL });
 
-    const systemPrompt = `You are a form generation expert. Given a user's description, create a JSON schema for a form with appropriate fields, validation rules, and labels. Always return valid JSON only, no additional text.
+    const systemPrompt = `You are a form generation expert. 
+Based on a user's description, create a JSON schema for a form with:
+- "title": form title
+- "description": brief summary
+- "fields": array of objects with { name, type, label, required, validation? }
 
-The schema should include:
-- fields: array of form fields with type, label, required, validation, etc.
-- title: form title
-- description: form description
-
-Example schema structure:
+Always return *only valid JSON*, no markdown, text, or explanation.
+Example output:
 {
-  "title": "Contact Form",
-  "description": "A simple contact form",
+  "title": "Signup Form",
+  "description": "A form for user registration",
   "fields": [
-    {
-      "name": "firstName",
-      "type": "text",
-      "label": "First Name",
-      "required": true,
-      "validation": {
-        "minLength": 2,
-        "maxLength": 50
-      }
-    }
+    { "name": "name", "type": "text", "label": "Full Name", "required": true },
+    { "name": "email", "type": "email", "label": "Email Address", "required": true }
   ]
 }`;
 
-    const result = await model.generateContent([
-      { text: systemPrompt },
-      { text: prompt }
-    ]);
+    // Combine prompt and system instructions
+    const input = `${systemPrompt}\n\nUser request: ${prompt}`;
 
-    const response = await result.response;
-    const text = response.text();
-    
-    // Extract JSON from response
+    // ✅ The new SDK prefers plain strings — not structured roles/parts
+    const result = await model.generateContent(input);
+
+    const text = result.response.text();
+    if (!text) throw new Error("Empty response from Gemini API");
+
+    // Safely extract JSON structure
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {
-      throw new Error('Invalid response format from Gemini');
+      throw new Error("Invalid JSON structure from Gemini response");
     }
 
-    const schema = JSON.parse(jsonMatch[0]);
-    return schema;
-  } catch (error) {
-    console.error('Error generating form schema:', error);
-    
-    // Check if it's an API model error
-    if (error && typeof error === 'object' && 'message' in error && typeof error.message === 'string' && error.message.includes('models/')) {
-      throw new Error('Gemini API model not available. Please check your API key and model configuration.');
+    const parsed = JSON.parse(jsonMatch[0]);
+    console.log("✅ Form schema generated successfully.");
+    return parsed;
+  } catch (error: any) {
+    console.error("❌ Error generating form schema:", error);
+
+    if (error.status === 404) {
+      throw new Error(
+        "Gemini API model 'gemini-1.5-flash' not found — ensure your API key has access and project supports it."
+      );
     }
-    
-    throw new Error('Failed to generate form schema');
+
+    if (error.message?.includes("Invalid JSON")) {
+      throw new Error("Gemini returned invalid JSON. Try refining your prompt.");
+    }
+    throw new Error("Failed to generate form schema. Please check your API configuration.");
   }
 };

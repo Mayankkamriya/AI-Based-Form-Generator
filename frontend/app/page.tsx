@@ -70,26 +70,27 @@ export default function HomePage() {
       </nav>
 
       {/* Hero Section */}
-      <div className="px-6 py-20">
-        <div className="max-w-7xl mx-auto text-center">
-          <div className="mb-8">
-            <div className="inline-flex items-center space-x-2 bg-teal-100 text-teal-700 px-4 py-2 rounded-full text-sm font-medium mb-6 mt-2">
-              <Sparkles className="w-4 h-4" />
-              <span>Powered by AI</span>
-            </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight mt-2">
-              Create Forms with
-              <span className="block bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mt-2">
-                Natural Language
-              </span>
-            </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mt-2">
-              Describe the form you want in plain English, and our AI will generate it instantly. 
-              No more complex form builders or coding required.
-            </p>
-          </div>
-          
-          <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
+      <div className="px-6 py-16 lg:pt-12 lg:pb-24">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Column - Text Content */}
+            <div className="text-center lg:text-left">
+              <div className="inline-flex items-center space-x-2 bg-teal-100 text-teal-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+                <Sparkles className="w-4 h-4" />
+                <span>Powered by AI</span>
+              </div>
+              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 mb-6 leading-tight">
+                Create Forms with
+                <span className="block bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+                  Natural Language
+                </span>
+              </h1>
+              <p className="text-xl text-gray-600 mb-8 leading-relaxed">
+                Describe the form you want in plain English, and our AI will generate it instantly. 
+                No more complex form builders or coding required.
+              </p>
+            
+          <div className="flex flex-col sm:flex-row items-center lg:items-start space-y-4 sm:space-y-0 sm:space-x-4 mb-8">
             <button
               onClick={() => router.push(isLoggedIn ? '/dashboard' : '/signup')}
               className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-2"
@@ -103,6 +104,123 @@ export default function HomePage() {
             >
               View Demo
             </Link> */}
+              </div>
+
+              {/* Stats */}
+              <div className="grid grid-cols-3 gap-6 mt-12">
+                <div>
+                  <div className="text-3xl font-bold text-teal-600">10K+</div>
+                  <div className="text-sm text-gray-600">Forms Created</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-emerald-600">5K+</div>
+                  <div className="text-sm text-gray-600">Active Users</div>
+                </div>
+                <div>
+                  <div className="text-3xl font-bold text-green-600">99.9%</div>
+                  <div className="text-sm text-gray-600">Uptime</div>
+                </div>
+              </div>
+            </div>
+
+            {/* Right Column - Visual Demo */}
+            <div className="hidden lg:block">
+              <div className="bg-white rounded-2xl shadow-2xl p-8 border border-gray-100">
+                <div className="mb-6">
+                  <div className="flex items-center space-x-2 mb-4">
+                    <Sparkles className="w-5 h-5 text-teal-600" />
+                    <span className="font-semibold text-gray-900">Try It Now</span>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
+                    <p className="text-gray-700 italic">
+                      "Create a contact form with name, email, phone, and message fields"
+                    </p>
+                  </div>
+                </div>
+                <div className="space-y-3">
+                  <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-lg p-3 border border-teal-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Full Name</span>
+                      <span className="text-xs text-gray-500">Text Input</span>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-lg p-3 border border-teal-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Email Address</span>
+                      <span className="text-xs text-gray-500">Email Input</span>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-lg p-3 border border-teal-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Phone Number</span>
+                      <span className="text-xs text-gray-500">Tel Input</span>
+                    </div>
+                  </div>
+                  <div className="bg-gradient-to-r from-teal-50 to-emerald-50 rounded-lg p-3 border border-teal-200">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-700">Message</span>
+                      <span className="text-xs text-gray-500">Text Area</span>
+                    </div>
+                  </div>
+                </div>
+                <div className="mt-6 flex items-center justify-center space-x-2 text-sm text-teal-600">
+                  <Zap className="w-4 h-4" />
+                  <span className="font-medium">Generated in 2 seconds</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* How It Works Section */}
+      <div className="px-6 py-20 bg-gradient-to-br from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-16">
+            <h2 className="text-4xl font-bold text-gray-900 mb-4">
+              How It Works
+            </h2>
+            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+              Create professional forms in three simple steps
+            </p>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="relative">
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 h-full">
+                <div className="w-12 h-12 bg-gradient-to-r from-teal-600 to-emerald-600 rounded-full flex items-center justify-center text-white font-bold text-xl mb-6">
+                  1
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Describe Your Form</h3>
+                <p className="text-gray-600">
+                  Simply type what you need in plain English. Our AI understands your requirements and context.
+                </p>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 h-full">
+                <div className="w-12 h-12 bg-gradient-to-r from-emerald-600 to-green-600 rounded-full flex items-center justify-center text-white font-bold text-xl mb-6">
+                  2
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">AI Generates Form</h3>
+                <p className="text-gray-600">
+                  Watch as AI creates your form with smart field types, validation rules, and perfect structure.
+                </p>
+              </div>
+            </div>
+            
+            <div className="relative">
+              <div className="bg-white rounded-2xl p-8 shadow-lg border border-gray-100 h-full">
+                <div className="w-12 h-12 bg-gradient-to-r from-green-600 to-teal-600 rounded-full flex items-center justify-center text-white font-bold text-xl mb-6">
+                  3
+                </div>
+                <h3 className="text-2xl font-semibold text-gray-900 mb-4">Share & Collect</h3>
+                <p className="text-gray-600">
+                  Share your form instantly, collect responses, and manage submissions all in one place.
+                </p>
+              </div>
+            </div>
           </div>
         </div>
       </div>

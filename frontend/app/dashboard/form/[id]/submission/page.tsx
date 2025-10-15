@@ -32,26 +32,40 @@ export default function SubmissionsPage() {
       setIsLoading(true);
       const response = await api.get(`/submission/${formId}`);
       
-      // Normalize submissions - parse JSON strings if needed
-      const normalizedSubmissions = response.data.submissions.map((sub: any) => {
-        let parsedData = sub.data;
+      // Parse data if it comes as a JSON string or has nested responses field
+      const processedSubmissions = response.data.submissions.map((submission: Submission) => {
+        let parsedData = submission.data;
         
-        // If data is a string (old format), try to parse it
-        if (typeof sub.data === 'string') {
+        // Check if data has a 'responses' field with stringified JSON
+        if (parsedData && typeof parsedData === 'object' && 'responses' in parsedData) {
+          const responsesValue = (parsedData as any).responses;
+          if (typeof responsesValue === 'string') {
+            try {
+              parsedData = JSON.parse(responsesValue);
+            } catch {
+              parsedData = responsesValue;
+            }
+          } else {
+            parsedData = responsesValue;
+          }
+        }
+        // If data itself is a string, try to parse it
+        else if (typeof parsedData === 'string') {
           try {
-            parsedData = JSON.parse(sub.data);
-          } catch (e) {
-            parsedData = { response: sub.data };
+            parsedData = JSON.parse(parsedData);
+          } catch {
+            // If parsing fails, keep as is
+            parsedData = parsedData;
           }
         }
         
         return {
-          ...sub,
-          data: parsedData
+          ...submission,
+          data: parsedData,
         };
       });
       
-      setSubmissions(normalizedSubmissions);
+      setSubmissions(processedSubmissions);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       setError(error.response?.data?.message || 'Failed to fetch submissions');

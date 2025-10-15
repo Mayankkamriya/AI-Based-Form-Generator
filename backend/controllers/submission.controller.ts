@@ -12,12 +12,19 @@ export const submitForm = async (req: AuthenticatedRequest, res: Response) => {
   try {
     const { formId } = req.params;
 
-    // Handle responses safely (req.body is Record<string, any>)
-    const responses: Record<string, any> = req.body ?? {};
-    const files = req.files as Express.Multer.File[]?? [];
-    console.log("req.body:", req.body);
+    // Parse responses from JSON string sent by frontend
+    let responses: Record<string, any> = {};
+    if (req.body.responses) {
+      try {
+        responses = JSON.parse(req.body.responses);
+      } catch (e) {
+        return res.status(400).json({ message: 'Invalid form data format' });
+      }
+    }
+    
+    const files = req.files as Express.Multer.File[] ?? [];
+    console.log("Parsed responses:", responses);
     console.log("req.files:", req.files);
-
 
     if (!responses || Object.keys(responses).length === 0) {
       return res.status(400).json({ message: 'Form responses are required' });

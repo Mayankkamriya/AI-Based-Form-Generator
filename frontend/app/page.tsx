@@ -35,12 +35,12 @@ export default function HomePage() {
           <div className="flex items-center space-x-4">
             {isLoggedIn ? (
               <>
-                <Link
+                {/* <Link
                   href="/dashboard"
                   className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
                 >
                   Dashboard
-                </Link>
+                </Link> */}
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 bg-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-600 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
@@ -57,12 +57,12 @@ export default function HomePage() {
                 >
                   Sign In
                 </Link>
-                <Link
+                {/* <Link
                   href="/signup"
                   className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-2 rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
                 >
                   Get Started
-                </Link>
+                </Link> */}
               </>
             )}
           </div>
@@ -73,36 +73,36 @@ export default function HomePage() {
       <div className="px-6 py-20">
         <div className="max-w-7xl mx-auto text-center">
           <div className="mb-8">
-            <div className="inline-flex items-center space-x-2 bg-teal-100 text-teal-700 px-4 py-2 rounded-full text-sm font-medium mb-6">
+            <div className="inline-flex items-center space-x-2 bg-teal-100 text-teal-700 px-4 py-2 rounded-full text-sm font-medium mb-6 mt-2">
               <Sparkles className="w-4 h-4" />
               <span>Powered by AI</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight">
+            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 mb-6 leading-tight mt-2">
               Create Forms with
-              <span className="block bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent">
+              <span className="block bg-gradient-to-r from-teal-600 to-emerald-600 bg-clip-text text-transparent mt-2">
                 Natural Language
               </span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed mt-2">
               Describe the form you want in plain English, and our AI will generate it instantly. 
               No more complex form builders or coding required.
             </p>
           </div>
           
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-4 sm:space-y-0 sm:space-x-4 mb-12">
-            <Link
-              href="/signup"
+            <button
+              onClick={() => router.push(isLoggedIn ? '/dashboard' : '/signup')}
               className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-8 py-4 rounded-xl font-semibold text-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-200 flex items-center space-x-2"
             >
               <span>Start Creating Forms</span>
               <ArrowRight className="w-5 h-5" />
-            </Link>
-            <Link
+            </button>
+            {/* <Link
               href="/login"
               className="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl font-semibold text-lg hover:border-teal-600 hover:text-teal-600 transition-all duration-200"
             >
               View Demo
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>
@@ -189,7 +189,8 @@ export default function HomePage() {
         </div>
       </div>
 
-      {/* CTA Section */}
+      {/* CTA Section - Only show when user is not logged in */}
+      {!isLoggedIn && (
       <div className="px-6 py-20">
         <div className="max-w-4xl mx-auto text-center">
           <h2 className="text-4xl font-bold text-gray-900 mb-6">
@@ -215,6 +216,7 @@ export default function HomePage() {
           </div>
         </div>
       </div>
+      )}
 
       {/* Footer */}
       <footer className="px-6 py-12 bg-gray-900 text-white">

@@ -31,7 +31,27 @@ export default function SubmissionsPage() {
     try {
       setIsLoading(true);
       const response = await api.get(`/submission/${formId}`);
-      setSubmissions(response.data.submissions);
+      
+      // Normalize submissions - parse JSON strings if needed
+      const normalizedSubmissions = response.data.submissions.map((sub: any) => {
+        let parsedData = sub.data;
+        
+        // If data is a string (old format), try to parse it
+        if (typeof sub.data === 'string') {
+          try {
+            parsedData = JSON.parse(sub.data);
+          } catch (e) {
+            parsedData = { response: sub.data };
+          }
+        }
+        
+        return {
+          ...sub,
+          data: parsedData
+        };
+      });
+      
+      setSubmissions(normalizedSubmissions);
     } catch (err: unknown) {
       const error = err as { response?: { data?: { message?: string } } };
       setError(error.response?.data?.message || 'Failed to fetch submissions');

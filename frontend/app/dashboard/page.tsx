@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useForm } from 'react-hook-form';
-import { Plus, Eye, FileText, Calendar, Sparkles } from 'lucide-react';
+import { Plus, Eye, FileText, Calendar, Sparkles, Lightbulb } from 'lucide-react';
 import api from '@/app/utils/api';
 
 interface Form {
@@ -16,6 +16,21 @@ interface CreateFormData {
   prompt: string;
 }
 
+const FORM_EXAMPLES = [
+  {
+    title: 'Newsletter Signup',
+    prompt: 'Create a newsletter signup form with email and name',
+  },
+  {
+    title: 'Event Registration',
+    prompt: 'Create an event registration form with full name, email, phone, number of attendees (1-10), dietary requirements (textarea), and photo ID upload',
+  },
+  {
+    title: 'Product Inquiry',
+    prompt: 'Create a product inquiry form with product name, quantity (number), customer email, message, and product image upload',
+  },
+];
+
 export default function DashboardPage() {
   const [forms, setForms] = useState<Form[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -27,8 +42,11 @@ export default function DashboardPage() {
     register,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<CreateFormData>();
+  
+  const [showExamples, setShowExamples] = useState(false);
 
   // Check authentication and fetch user's forms
   useEffect(() => {
@@ -97,6 +115,11 @@ export default function DashboardPage() {
     });
   };
 
+  const handleExampleClick = (prompt: string) => {
+    setValue('prompt', prompt);
+    setShowExamples(false);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-8">
@@ -149,9 +172,39 @@ export default function DashboardPage() {
 
           <form onSubmit={handleSubmit(onCreateForm)} className="space-y-4 sm:space-y-6">
             <div>
-              <label htmlFor="prompt" className="block text-sm font-semibold text-gray-700 mb-2 sm:mb-3">
-                Describe the form you want to create
-              </label>
+              <div className="flex items-center justify-between mb-2 sm:mb-3">
+                <label htmlFor="prompt" className="block text-sm font-semibold text-gray-700">
+                  Describe the form you want to create
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setShowExamples(!showExamples)}
+                  className="inline-flex items-center space-x-1 text-xs sm:text-sm text-teal-600 hover:text-teal-700 font-medium transition-colors"
+                >
+                  <Lightbulb className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                  <span>{showExamples ? 'Hide' : 'Show'} Examples</span>
+                </button>
+              </div>
+              
+              {showExamples && (
+                <div className="mb-3 sm:mb-4 p-3 sm:p-4 bg-teal-50 border border-teal-200 rounded-xl">
+                  <p className="text-xs sm:text-sm font-medium text-teal-900 mb-2 sm:mb-3">Click an example to use it:</p>
+                  <div className="space-y-2">
+                    {FORM_EXAMPLES.map((example, index) => (
+                      <button
+                        key={index}
+                        type="button"
+                        onClick={() => handleExampleClick(example.prompt)}
+                        className="w-full text-left px-3 py-2 bg-white hover:bg-teal-100 border border-teal-300 hover:border-teal-400 rounded-lg transition-all duration-200 group"
+                      >
+                        <p className="text-xs sm:text-sm font-semibold text-teal-900 mb-1">{example.title}</p>
+                        <p className="text-xs text-teal-700 group-hover:text-teal-900">{example.prompt}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              
               <textarea
                 {...register('prompt', { 
                   required: 'Please describe the form you want to create',

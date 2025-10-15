@@ -1,10 +1,26 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import "./globals.css";
-import { Sparkles, FileText, Zap, Shield, Users, ArrowRight } from 'lucide-react';
+import { Sparkles, FileText, Zap, Shield, Users, ArrowRight, LogOut } from 'lucide-react';
 
 export default function HomePage() {
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const router = useRouter();
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+    setIsLoggedIn(!!token);
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoggedIn(false);
+    router.push('/');
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-teal-50 via-white to-emerald-50">
       {/* Navigation */}
@@ -17,18 +33,38 @@ export default function HomePage() {
             <span className="text-2xl font-bold text-gray-900">SmartForms Pro</span>
           </div>
           <div className="flex items-center space-x-4">
-            <Link
-              href="/login"
-              className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/signup"
-              className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-2 rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
-            >
-              Get Started
-            </Link>
+            {isLoggedIn ? (
+              <>
+                <Link
+                  href="/dashboard"
+                  className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                >
+                  Dashboard
+                </Link>
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 bg-red-500 text-white px-6 py-2 rounded-xl font-semibold hover:bg-red-600 hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              </>
+            ) : (
+              <>
+                <Link
+                  href="/login"
+                  className="text-gray-600 hover:text-gray-900 transition-colors duration-200"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/signup"
+                  className="bg-gradient-to-r from-teal-600 to-emerald-600 text-white px-6 py-2 rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200"
+                >
+                  Get Started
+                </Link>
+              </>
+            )}
           </div>
         </div>
       </nav>

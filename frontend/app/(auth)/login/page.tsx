@@ -35,8 +35,9 @@ export default function LoginPage() {
       // Redirect to dashboard
       router.push('/dashboard');
     } catch (err: unknown) {
-      const error = err as { response?: { data?: { message?: string } } };
-      setError(error.response?.data?.message || 'Login failed. Please check your credentials.');
+      const error = err as { response?: { data?: { message?: string }, status?: number } };
+      const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      setError(errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -62,7 +63,14 @@ export default function LoginPage() {
           <div className="px-8 py-8">
             {error && (
               <div className="mb-6 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm">
-                {error}
+                <p>{error}</p>
+                {error.includes('not registered') && (
+                  <p className="mt-2">
+                    <Link href="/signup" className="font-semibold text-red-800 hover:text-red-900 underline">
+                      Click here to create an account
+                    </Link>
+                  </p>
+                )}
               </div>
             )}
             

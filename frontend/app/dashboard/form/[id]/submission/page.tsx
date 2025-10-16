@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
+import { Download } from 'lucide-react';
 import api from '@/app/utils/api';
 
 interface Submission {
@@ -87,6 +88,80 @@ export default function SubmissionsPage() {
     fetchSubmissions();
     fetchFormTitle();
   }, [fetchSubmissions, fetchFormTitle]);
+
+  const downloadCSV = () => {
+    if (submissions.length === 0) {
+      alert('No submissions to download');
+      return;
+    }
+
+    // Helper function to escape CSV values
+    const escapeCSV = (value: string): string => {
+      return `"${value.replace(/"/g, '""')}"`;
+    };
+
+    // Get all unique field names from all submissions
+    const allFieldNames = new Set<string>();
+    submissions.forEach((submission) => {
+      if (typeof submission.data === 'object' && submission.data !== null) {
+        Object.keys(submission.data as Record<string, string | number>).forEach((key) => {
+          allFieldNames.add(key);
+        });
+      }
+    });
+
+    // Create CSV headers with proper escaping
+    const headers = [
+      escapeCSV('Submitted Date'), 
+      ...Array.from(allFieldNames).map(field => escapeCSV(field)), 
+      escapeCSV('Files')
+    ];
+    
+    // Create CSV rows
+    const rows = submissions.map((submission) => {
+      const row: string[] = [];
+      
+      // Add date
+      row.push(escapeCSV(formatDate(submission.createdAt)));
+      
+      // Add field values
+      allFieldNames.forEach((fieldName) => {
+        let value = '';
+        if (typeof submission.data === 'object' && submission.data !== null) {
+          const fieldValue = (submission.data as Record<string, string | number>)[fieldName];
+          value = fieldValue !== undefined && fieldValue !== null ? String(fieldValue) : '';
+        }
+        row.push(escapeCSV(value));
+      });
+      
+      // Add files with proper escaping
+      const filesValue = submission.files && submission.files.length > 0 
+        ? submission.files.join('; ') 
+        : '';
+      row.push(escapeCSV(filesValue));
+      
+      return row.join(',');
+    });
+
+    // Combine headers and rows
+    const csvContent = [headers.join(','), ...rows].join('\n');
+
+    // Create blob and download
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    
+    link.setAttribute('href', url);
+    link.setAttribute('download', `${formTitle || 'form'}_submissions_${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    
+    // Clean up the URL object
+    URL.revokeObjectURL(url);
+  };
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -185,12 +260,22 @@ export default function SubmissionsPage() {
                 View all responses and uploaded files for this form
               </p>
             </div>
-            <Link
-              href="/dashboard"
-              className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
-            >
-              ← Back to Dashboard
-            </Link>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={downloadCSV}
+                disabled={submissions.length === 0}
+                className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-teal-600 hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500 disabled:bg-gray-400 disabled:cursor-not-allowed"
+              >
+                <Download className="w-4 h-4 mr-2" />
+                Download CSV
+              </button>
+              <Link
+                href="/dashboard"
+                className="inline-flex items-center px-4 py-2 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-teal-500"
+              >
+                ← Back to Dashboard
+              </Link>
+            </div>
           </div>
         </div>
 
